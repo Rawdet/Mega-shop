@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mega Shop Online</title>
+
+<style>
+body {
+    margin:0;
+    font-family: Arial;
+    direction: rtl;
+    background:#f3f3f3;
+}
+
+/* Header */
+header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#131921;
+    color:white;
+    padding:10px;
+}
+
+header input {
+    width:50%;
+    padding:8px;
+    border-radius:5px;
+    border:none;
+}
+
+/* Banner */
+.banner {
+    background:url('https://via.placeholder.com/800x250');
+    height:200px;
+    background-size:cover;
+    margin:10px;
+    border-radius:10px;
+}
+
+/* Sections */
+h2 {
+    padding:10px;
+}
+
+/* Products */
+.products {
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+    gap:15px;
+    padding:10px;
+}
+
+.product {
+    background:white;
+    padding:10px;
+    border-radius:10px;
+    text-align:center;
+    transition:0.3s;
+}
+
+.product:hover {
+    transform:scale(1.05);
+    box-shadow:0 0 10px rgba(0,0,0,0.2);
+}
+
+.product img {
+    width:100%;
+}
+
+/* Buttons */
+.btn {
+    background:#ff9900;
+    padding:8px;
+    margin-top:5px;
+    display:block;
+    border:none;
+    cursor:pointer;
+    border-radius:5px;
+}
+
+/* Cart */
+.cart {
+    position:fixed;
+    right:-100%;
+    top:0;
+    width:300px;
+    height:100%;
+    background:white;
+    padding:10px;
+    transition:0.3s;
+    overflow:auto;
+}
+
+.cart.active {
+    right:0;
+}
+
+/* Stars */
+.stars {
+    color: gold;
+}
+
+/* Wishlist */
+.wishlist {
+    color:red;
+    cursor:pointer;
+    font-size:20px;
+}
+
+/* Footer */
+footer {
+    background:#131921;
+    color:white;
+    text-align:center;
+    padding:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div>🛍️ Mega Shop</div>
+<input type="text" id="search" placeholder="ابحث..." onkeyup="searchProducts()">
+<div onclick="toggleCart()">🛒 (<span id="count">0</span>)</div>
+</header>
+
+<div class="banner"></div>
+
+<!-- Sections -->
+
+<h2>🔥 عروض مميزة</h2>
+<div class="products">
+
+<div class="product">
+<span class="wishlist" onclick="addToWishlist('تيشيرت')">♥</span>
+<img src="https://via.placeholder.com/200">
+<h3>تيشيرت</h3>
+
+<div class="stars">⭐⭐⭐⭐☆</div>
+
+<p style="text-decoration:line-through">300</p>
+<p style="color:green">199 جنيه</p>
+
+<button class="btn" onclick="addToCart('تيشيرت',199)">أضف للسلة</button>
+<button class="btn" onclick="buyNow('تيشيرت',199)">اشتري الآن</button>
+</div>
+
+<div class="product">
+<span class="wishlist" onclick="addToWishlist('سماعات')">♥</span>
+<img src="https://via.placeholder.com/200">
+<h3>سماعات</h3>
+
+<div class="stars">⭐⭐⭐⭐⭐</div>
+
+<p style="text-decoration:line-through">400</p>
+<p style="color:green">299 جنيه</p>
+
+<button class="btn" onclick="addToCart('سماعات',299)">أضف للسلة</button>
+<button class="btn" onclick="buyNow('سماعات',299)">اشتري الآن</button>
+</div>
+
+</div>
+
+<!-- Cart -->
+<div class="cart" id="cart">
+<h2>🛒 السلة</h2>
+<div id="cart-items"></div>
+<h3 id="total">الإجمالي: 0</h3>
+
+<h3>📦 بيانات الطلب</h3>
+<input id="name" placeholder="الاسم" style="width:100%;margin:5px 0">
+<input id="address" placeholder="العنوان" style="width:100%;margin:5px 0">
+<input id="phone" placeholder="رقم الهاتف" style="width:100%;margin:5px 0">
+
+<button class="btn" onclick="orderWhatsApp()">اطلب الآن</button>
+</div>
+
+<footer>© 2026 Mega Shop</footer>
+
+<script>
+let cart = [];
+let wishlist = [];
+
+function addToCart(name, price){
+    cart.push({name, price});
+    updateCart();
+}
+
+function updateCart(){
+    let items = document.getElementById("cart-items");
+    let total = 0;
+    items.innerHTML = "";
+
+    cart.forEach(item=>{
+        items.innerHTML += `<div>${item.name} - ${item.price} جنيه</div>`;
+        total += item.price;
+    });
+
+    document.getElementById("total").innerText = "الإجمالي: " + total;
+    document.getElementById("count").innerText = cart.length;
+}
+
+function toggleCart(){
+    document.getElementById("cart").classList.toggle("active");
+}
+
+function buyNow(name, price){
+    let msg = "طلب مباشر:%0A" + name + " - " + price + " جنيه";
+    window.open("https://wa.me/201XXXXXXXXX?text=" + msg);
+}
+
+function orderWhatsApp(){
+    let name = document.getElementById("name").value;
+    let address = document.getElementById("address").value;
+    let phone = document.getElementById("phone").value;
+
+    let msg = "🛒 طلب جديد:%0A";
+
+    cart.forEach(item=>{
+        msg += item.name + " - " + item.price + "%0A";
+    });
+
+    msg += "%0A👤 الاسم: " + name;
+    msg += "%0A📍 العنوان: " + address;
+    msg += "%0A📞 الهاتف: " + phone;
+
+    window.open("https://wa.me/201027240469?text=" + msg);
+}
+
+function searchProducts(){
+    let input = document.getElementById("search").value.toLowerCase();
+    let products = document.getElementsByClassName("product");
+
+    for (let i=0;i<products.length;i++){
+        let title = products[i].getElementsByTagName("h3")[0].innerText.toLowerCase();
+        products[i].style.display = title.includes(input) ? "block" : "none";
+    }
+}
+
+function addToWishlist(name){
+    wishlist.push(name);
+    alert("تمت الإضافة للمفضلة ❤️");
+}
+</script>
+
+</body>
+</html>
